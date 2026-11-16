@@ -4,6 +4,7 @@ type Profile = {
   name: string;
   title: string;
   summary: string;
+  description: string;
   location: string;
   email: string;
   links: Link[];
@@ -15,9 +16,11 @@ export const profile: Profile = {
   name: "J Siddharth",
   title: "Software Engineer",
   summary:
-    "Software Engineer with 1.5 years of experience shipping cross-platform apps. Currently building an AI product, owning features from the interface to the backend. Experienced in state management, backend development with Supabase and API integration.",
+    "Software Engineer with 1.5 years of experience shipping cross-platform apps with Flutter. Currently building an AI product across mobile and desktop, owning features from the interface to the backend. Experienced in Supabase and API integration.",
+  description:
+    "Software Engineer in Kochi building cross-platform apps with Flutter and Supabase.",
   location: "Kochi, Kerala, India",
-  email: "siddharthj0015@gmail.com",
+  email: "jsiddharth.dev@gmail.com",
   links: [
     {
       label: "GitHub",

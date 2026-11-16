@@ -37,11 +37,13 @@ app/
   tokens.css        every color, the hard shadow and the font mapping
   icon.svg          SJ logo, browser tab icon; follows the browser's light/dark setting
   apple-icon.tsx    180x180 home-screen PNG generated from icon.svg
+  opengraph-image.tsx  1200x630 link preview image: location, name and title
+  api/contact/route.ts  sends the contact form message by email (Resend)
 components/
   Header.tsx        logo + nav links (server)
   MobileMenu.tsx    "use client", open/close toggle only
   ThemeToggle.tsx   "use client", flips and stores the theme only
-  ContactForm.tsx   "use client", form state only
+  ContactForm.tsx   "use client", form state and the POST to /api/contact
   Section.tsx       section shell + optional heading
   Card.tsx          bordered card with the hard shadow
   Button.tsx        accent / surface buttons (+ buttonVariants for links)
@@ -58,7 +60,7 @@ content/
   profile.ts
   experience.ts
   skills.ts
-  contact.ts        contact note, email label, form labels
+  contact.ts        contact note, email label, form labels, status messages and field length limits
 public/
   Siddharth-Resume.pdf
   favicon.ico       light-only fallback for direct /favicon.ico requests; kept out of app/ so the theme-aware icon.svg is the only advertised tab icon (rebuild from the apple-icon PNG if the logo changes)
@@ -75,6 +77,7 @@ type Profile = {
   name: string;
   title: string;
   summary: string;
+  description: string; // short line for search results and link previews
   location: string;
   email: string;
   links: Link[];
@@ -97,8 +100,12 @@ type Section = { id: string; title: string }; // hero has an id only
 type ContactContent = {
   note: string;
   emailLabel: string;
-  form: { name: string; email: string; message: string; submit: string };
+  form: {
+    name: string; email: string; message: string; submit: string;
+    sending: string; success: string; error: string;
+  };
 };
+// also exports contactLimits: the longest accepted name, email and message
 ```
 
 ## Site rules
@@ -111,7 +118,9 @@ type ContactContent = {
 - Section ids, titles and the nav order are defined once in `content/site.ts`. The header, mobile menu and sections all read them.
 - Smooth scrolling is CSS only (off for `prefers-reduced-motion`). Sections use `scroll-margin-top` so the sticky header never covers a title.
 - `public/Siddharth-Resume.pdf` is updated by hand when the content files change.
-- Contact form: include a hidden spam field and show clear success and error states.
+- Contact form: posts to the route handler `app/api/contact/route.ts`, which sends mail through the Resend API (plain `fetch`, no SDK). It sends from Resend's test sender `onboarding@resend.dev` to the address in `profile.ts`, with the visitor's email as reply-to. The test sender only delivers to the email the Resend account was created with, so that must be the `profile.ts` address. The only secret is `RESEND_API_KEY`, set in `.env.local` locally and in the Vercel environment variables. The form has a hidden spam field (`website`, checked on the server) and shows success and error states. Field lengths are capped by `contactLimits` in `content/contact.ts`, in the form and again on the server.
+- Link previews: `app/layout.tsx` sets the page title (name and title), the short `description` from `profile.ts`, and the Open Graph and Twitter tags. `app/opengraph-image.tsx` draws the preview image. Absolute URLs use the `VERCEL_PROJECT_PRODUCTION_URL` variable that Vercel sets.
+- Hosting: Vercel (free Hobby plan), deployed from GitHub. `next.config.ts` sets the security headers.
 
 ## Done checklist
 
@@ -122,4 +131,4 @@ type ContactContent = {
 - [ ] Contact form delivers a real test email
 - [ ] No hardcoded colors or sizes outside `tokens.css`
 - [x] `npm run lint` and `npm run build` pass
-- [ ] Deployed to a free static host and checked on a real phone
+- [ ] Deployed to Vercel and checked on a real phone

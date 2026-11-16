@@ -5,8 +5,4 @@ export const skills: SkillGroup[] = [
   { label: "Frameworks", items: ["Flutter", "React", "Next.js", "Django"] },
   { label: "State Management", items: ["Bloc/Cubit", "Provider"] },
   { label: "Databases", items: ["Supabase", "PostgreSQL", "MySQL"] },
-  {
-    label: "Tools",
-    items: ["Git", "GitHub", "VS Code", "Android Studio", "Claude Code", "Codex"],
-  },
 ];

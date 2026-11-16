@@ -14,9 +14,22 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
+const title = `${profile.name} | ${profile.title}`;
+
+// Vercel sets this to the live site's domain, without "https://".
+const host = process.env.VERCEL_PROJECT_PRODUCTION_URL;
+
 export const metadata: Metadata = {
-  title: profile.name,
-  description: profile.summary,
+  metadataBase: new URL(host ? `https://${host}` : "http://localhost:3000"),
+  title,
+  description: profile.description,
+  openGraph: {
+    title,
+    description: profile.description,
+    type: "website",
+    url: "/",
+  },
+  twitter: { card: "summary_large_image" },
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
